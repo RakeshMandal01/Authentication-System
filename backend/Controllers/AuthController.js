@@ -9,7 +9,7 @@ const register = async (req,res) => {
 
       if(user){
         return res.status(409)
-        .json({message: 'User already exists', sucess: false})
+        .json({message: 'User already exists', success: false})
       }
       const hashedPassword = await bcryptjs.hash(password,10)
       const newUser = new userModel({
@@ -21,7 +21,7 @@ const register = async (req,res) => {
     })
        await newUser.save()
        res.status(201)
-       .json({message: 'User registeres successfully. Await admin approval',success: false})
+       .json({message: 'User registered successfully. Await admin approval', success: true})
     }catch(err){
         console.log(err);
         res.status(500).json({message: 'Internal Server Error', success: false})

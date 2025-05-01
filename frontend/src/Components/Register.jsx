@@ -57,6 +57,7 @@ const handleSubmit = (e) => {
             />
             <input 
             name = "email"
+            type = "email"
             placeholder = "Enter your email"
             onChange = { handleChange }
             value = { registrationData.email }
@@ -64,6 +65,7 @@ const handleSubmit = (e) => {
             />
             <input 
             name = "password"
+            type = "password"
             placeholder = "Enter your password"
             onChange = { handleChange }
             value = { registrationData.password }

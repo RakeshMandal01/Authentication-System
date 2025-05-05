@@ -1,25 +1,27 @@
 import React from 'react'
-import './App.css'
-import { ToastContainer } from 'react-toastify'
-import { Routes, Route, Navigate } from 'react-router-dom'
-import Register from './Components/Register'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './Components/Login'
 import Admin from './Components/Admin'
 import Home from './Components/Home'
+import Register from './Components/Register'
+import NavigationGuard from './Components/NavigationGuard'
+import './index.css'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<Register />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/home" element={<Home />} />
-        
-      </Routes>
-      <ToastContainer />
-    </>
+    
+      <NavigationGuard>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/admin" element={<Admin />} />
+          {/* Redirect any unknown routes to register */}
+          <Route path="*" element={<Navigate to="/register" replace />} />
+        </Routes>
+      </NavigationGuard>
+    
   )
 }
 

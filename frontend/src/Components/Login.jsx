@@ -1,19 +1,21 @@
 import React, { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { toast, ToastContainer } from 'react-toastify'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { decodeJwt } from '../utils/jwt'
+import '../styles/Login.css'
 
-function loginUser(data) {
-  return fetch('http://localhost:3000/api/auth/login', {
+async function loginUser(data) {
+ const res = await fetch('http://localhost:3000/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
-  }).then(res => res.json())
+  })
+  return res.json()
 }
 
-export default function Login() {
-  const [form, setForm] = useState({ email: '', password: '' })
+function Login() {
+  const [loginData, setLoginData] = useState({ email: '', password: '' })
   const navigate = useNavigate()
 
   const mutation = useMutation({
@@ -21,6 +23,7 @@ export default function Login() {
     onSuccess: (data) => {
       if (data.success) {
         toast.success(data.message)
+        localStorage.setItem('jwtToken', data.jwtToken) // Store token in localStorage
         const decodedToken = decodeJwt(data.jwtToken)
         if (decodedToken?.role === 'admin') {
           navigate('/admin', { replace: true })
@@ -28,28 +31,47 @@ export default function Login() {
           navigate('/home', { replace: true })
         }
       }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Login failed. Please try again.')
     }
   })
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    setLoginData({ ...loginData, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    mutation.mutate(form)
+    mutation.mutate(loginData)
   }
 
   return (
     <>
-
+      <h1 className="register-heading">Login</h1>
       <form onSubmit={handleSubmit}>
-        <input name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
-        <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} required />
+        <input
+          name="email"
+          placeholder="Email"
+          value={loginData.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={loginData.password}
+          onChange={handleChange}
+          required
+        />
         <button type="submit" disabled={mutation.isLoading}>Login</button>
+        <span>Do not have an account? <Link to='/register'>Register</Link></span>
       </form>
 
       <ToastContainer />
     </>
   )
 }
+
+export default Login

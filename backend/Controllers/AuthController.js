@@ -45,11 +45,11 @@ const login = async (req,res) => {
         return res.status(400)
         .json({message: 'Invalid email or password', success:false})
      }
-     // Create a JWT Token
+     // Create a JWT Token with shorter expiration (e.g., 1 hour)
      const jwtToken = jwt.sign(
-        { userId : user._id, role: user.role},
+        { userId : user._id, role: user.role, username: user.username },
         process.env.JWT_SECRET,
-        {expiresIn: '24h'}
+        {expiresIn: '1h'}
     )
     res.status(200)
     .json({message: 'Login Successful',success:true,jwtToken})
@@ -64,7 +64,7 @@ const login = async (req,res) => {
 const getPendingUsers = async(req,res) => {
     try{
       const users = await userModel.find({isApproved: false})
-      res.json(users)
+      res.json({users})
     }catch(err){
         res.status(500)
         .json({message: 'Server error'})
